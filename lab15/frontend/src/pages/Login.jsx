@@ -1,6 +1,25 @@
 import {Link} from 'react-router-dom'
-
+import {useState} from 'react'
+import AuthService from '../services/auth.service'
+import {useNavigate} from 'react-router-dom'
 function Login() {
+    const [usuario,setUsuario] = useState('')
+    const [password,setPassword] = useState('')
+    const [mensaje,setMensaje] = useState('')
+    const  navigate= useNavigate()
+    function handlerLogin(e){
+        e.preventDefault();
+        console.log("usuario" +password)
+        console.log("password"+password)
+        AuthService.login(usuario,password)
+        .then(()=>{
+            return navigate("/")
+        },
+        error => {
+            setMensaje("usuario o password incorrecto")
+        }
+        )
+    }
     return(
             <>
                 <div id="layoutAuthentication">
@@ -12,12 +31,13 @@ function Login() {
                                         <div className="card shadow-lg border-0 rounded-lg mt-5">
                                             <div className="card-header"><h3 className="text-center font-weight-light my-4">Login</h3></div>
                                             <div className="card-body">
-                                                <form>
+                                                <form onSubmit={handlerLogin}>
                                                     <div className="form-floating mb-3">
                                                         <input className="form-control"
                                                         id="inputText"
                                                         type="text"
                                                         placeholder="usuario"
+                                                        value={usuario} onChange={(e)=>setUsuario(e.target.value)}
                                                         />
                                                         <label for="inputText">Usuario</label>
                                                     </div>
@@ -26,6 +46,7 @@ function Login() {
                                                         id="inputPassword"
                                                         type="password"
                                                         placeholder="Password"
+                                                        value={password} onChange={(e)=>setPassword(e.target.value)}
                                                         />
                                                         <label for="inputPassword">Password</label>
                                                     </div>
@@ -38,6 +59,13 @@ function Login() {
                                                         <input type="submit" className="btn btn-primary" value="Login"/>
                                                     </div>
                                                 </form>
+                                                {mensaje && (
+                                                    <div className="form-group" >
+                                                        <div className="alert alert-danger" >
+                                                            {mensaje}
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="card-footer text-center py-3">
                                                 <div className="small"><Link to ="/register">No tienes cuenta? Registrate</Link> </div>
